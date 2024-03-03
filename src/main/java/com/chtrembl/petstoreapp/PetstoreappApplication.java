@@ -10,6 +10,7 @@ import java.net.UnknownHostException;
 
 @SpringBootApplication
 public class PetstoreappApplication {
+	
 	private static Logger logger = LoggerFactory.getLogger(PetstoreappApplication.class);
 
 	public static void main(String[] args) {
