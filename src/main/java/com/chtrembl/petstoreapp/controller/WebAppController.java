@@ -219,13 +219,10 @@ public class WebAppController {
 		}
 		this.sessionUser.setCartCount(cartSize);
 		model.addAttribute("cartSize", this.sessionUser.getCartCount());
-		model.addAttribute("userLoggedIn", true);
-		model.addAttribute("email", "test@test.test");
-		// Until oauth works
-//		if (token != null) {
-//			model.addAttribute("userLoggedIn", true);
-//			model.addAttribute("email", this.sessionUser.getEmail());
-//		}
+		if (token != null) {
+			model.addAttribute("userLoggedIn", true);
+			model.addAttribute("email", this.sessionUser.getEmail());
+		}
 		return "cart";
 	}
 
