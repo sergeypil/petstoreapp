@@ -182,7 +182,7 @@ public class PetStoreServiceImpl implements PetStoreService {
 			product.setId((long) 0);
 			products.add(product);
 		}
-		throw new Exception("Cannot move further");
+		
 		return products;
 	}
 
