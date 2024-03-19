@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.chtrembl.petstoreapp.security.TokenGenerator;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,10 +60,14 @@ public class WebAppController {
 
 	@Autowired
 	private CacheManager currentUsersCacheManager;
+	
+	@Autowired
+	private TokenGenerator tokenGenerator;
 
 	@ModelAttribute
-	public void setModel(HttpServletRequest request, Model model, OAuth2AuthenticationToken token) {
-
+	public void setModel(HttpServletRequest request, Model model) {
+		OAuth2AuthenticationToken token = TokenGenerator.generate();
+		
 		CaffeineCache caffeineCache = (CaffeineCache) this.currentUsersCacheManager
 				.getCache(ContainerEnvironment.CURRENT_USERS_HUB);
 		com.github.benmanes.caffeine.cache.Cache<Object, Object> nativeCache = caffeineCache.getNativeCache();
@@ -135,7 +140,7 @@ public class WebAppController {
 	// multiple endpoints to generate some Telemetry and allowing for
 	// differentiation
 	@GetMapping(value = { "/dogbreeds", "/catbreeds", "/fishbreeds" })
-	public String breeds(Model model, OAuth2AuthenticationToken token, HttpServletRequest request,
+	public String breeds(Model model, HttpServletRequest request,
 			@RequestParam(name = "category") String category) throws URISyntaxException {
 
 		// quick validation, should really be done in validators, check for cross side
@@ -150,7 +155,7 @@ public class WebAppController {
 	}
 
 	@GetMapping(value = "/breeddetails")
-	public String breedeetails(Model model, OAuth2AuthenticationToken token, HttpServletRequest request,
+	public String breedeetails(Model model, HttpServletRequest request,
 			@RequestParam(name = "category") String category, @RequestParam(name = "id") int id)
 			throws URISyntaxException {
 
@@ -182,7 +187,7 @@ public class WebAppController {
 	}
 
 	@GetMapping(value = "/products")
-	public String products(Model model, OAuth2AuthenticationToken token, HttpServletRequest request,
+	public String products(Model model, HttpServletRequest request,
 			@RequestParam(name = "category") String category, @RequestParam(name = "id") int id)
 			throws URISyntaxException {
 
@@ -210,7 +215,9 @@ public class WebAppController {
 	}
 
 	@GetMapping(value = "/cart")
-	public String cart(Model model, OAuth2AuthenticationToken token, HttpServletRequest request) {
+	public String cart(Model model, HttpServletRequest request) {
+		OAuth2AuthenticationToken token = TokenGenerator.generate();
+		
 		Order order = this.petStoreService.retrieveOrder(this.sessionUser.getSessionId());
 		model.addAttribute("order", order);
 		int cartSize = 0;
@@ -227,7 +234,7 @@ public class WebAppController {
 	}
 
 	@PostMapping(value = "/updatecart")
-	public String updatecart(Model model, OAuth2AuthenticationToken token, HttpServletRequest request,
+	public String updatecart(Model model, HttpServletRequest request,
 			@RequestParam Map<String, String> params) {
 		int cartCount = 1;
 
@@ -243,7 +250,9 @@ public class WebAppController {
 	}
 
 	@PostMapping(value = "/completecart")
-	public String updatecart(Model model, OAuth2AuthenticationToken token, HttpServletRequest request) {
+	public String updatecart(Model model, HttpServletRequest request) {
+		OAuth2AuthenticationToken token = TokenGenerator.generate();
+		
 		if (token != null) {
 			this.petStoreService.updateOrder(0, 0, true);
 		}
@@ -251,7 +260,7 @@ public class WebAppController {
 	}
 
 	@GetMapping(value = "/claims")
-	public String claims(Model model, OAuth2AuthenticationToken token, HttpServletRequest request)
+	public String claims(Model model, HttpServletRequest request)
 			throws URISyntaxException {
 		logger.info(String.format("PetStoreApp /claims requested for %s, routing to claims view...",
 				this.sessionUser.getName()));
@@ -259,7 +268,7 @@ public class WebAppController {
 	}
 
 	@GetMapping(value = "/slowness")
-	public String generateappinsightsslowness(Model model, OAuth2AuthenticationToken token, HttpServletRequest request)
+	public String generateappinsightsslowness(Model model, HttpServletRequest request)
 			throws URISyntaxException, InterruptedException {
 		logger.info("PetStoreApp simulating slowness, routing to home view...");
 
@@ -276,7 +285,7 @@ public class WebAppController {
 	}
 
 	@GetMapping(value = "/exception")
-	public String exception(Model model, OAuth2AuthenticationToken token, HttpServletRequest request)
+	public String exception(Model model, HttpServletRequest request)
 			throws URISyntaxException, InterruptedException {
 
 		NullPointerException npe = new NullPointerException();
@@ -289,7 +298,7 @@ public class WebAppController {
 	}
 
 	@GetMapping(value = "/*")
-	public String landing(Model model, OAuth2AuthenticationToken token, HttpServletRequest request)
+	public String landing(Model model, HttpServletRequest request)
 			throws URISyntaxException {
 		logger.info(String.format("PetStoreApp %s requested and %s is being routed to home view session %s",
 				request.getRequestURI(), this.sessionUser.getName(), this.sessionUser.getSessionId()));
