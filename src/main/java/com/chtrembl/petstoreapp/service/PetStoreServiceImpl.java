@@ -119,7 +119,7 @@ public class PetStoreServiceImpl implements PetStoreService {
 	}
 
 	@Override
-	public Collection<Product> getProducts(String category, List<Tag> tags) {
+	public Collection<Product> getProducts(String category, List<Tag> tags) throws Exception {
 		List<Product> products = new ArrayList<>();
 
 		String username = this.sessionUser.getName(); // I am assuming you have a getName method in your User Class
@@ -158,7 +158,8 @@ public class PetStoreServiceImpl implements PetStoreService {
 				products = products.stream().filter(product -> category.equals(product.getCategory().getName())
 						&& product.getTags().toString().contains("small")).collect(Collectors.toList());
 			}
-			return products;
+			throw new Exception("Cannot move further");
+			//return products;
 		} catch (
 
 		WebClientException wce) {
@@ -182,8 +183,7 @@ public class PetStoreServiceImpl implements PetStoreService {
 			product.setId((long) 0);
 			products.add(product);
 		}
-		throw new RuntimeException("Cannot move further");
-		//return products;
+		return products;
 	}
 
 	@Override
