@@ -31,6 +31,7 @@ import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -121,6 +122,12 @@ public class PetStoreServiceImpl implements PetStoreService {
 	public Collection<Product> getProducts(String category, List<Tag> tags) {
 		List<Product> products = new ArrayList<>();
 
+		String username = this.sessionUser.getName(); // I am assuming you have a getName method in your User Class
+
+		Map<String, String> properties = Map.of("username", username, "sessionsId", this.sessionUser.getSessionId());
+
+		this.sessionUser.getTelemetryClient().trackEvent("PetStoreServiceImpl.getProducts", properties, null);
+
 		try {
 			Consumer<HttpHeaders> consumer = it -> it.addAll(this.webRequest.getHeaders());
 			products = this.productServiceWebClient.get()
@@ -133,6 +140,9 @@ public class PetStoreServiceImpl implements PetStoreService {
 					.bodyToMono(new ParameterizedTypeReference<List<Product>>() {
 					}).block();
 
+			// Log the number of products as a custom metric
+			this.sessionUser.getTelemetryClient().trackMetric("Number of Products Returned", products.size());
+			
 			// use this for look up on details page, intentionally avoiding spring cache to
 			// ensure service calls are made each for each browser session
 			// to show Telemetry with APIM requests (normally this would be cached in a real
