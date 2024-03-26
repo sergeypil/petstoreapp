@@ -51,7 +51,7 @@ spring:
           login-flow: sign-up-or-sign-in
           profile-edit-flow: profile-editing-flow
           password-reset-flow: password-reset-flow
-          logout-success-url: http://localhost:8080/login/oauth2/code/
+          logout-success-url: ${REDIRECT_URI:http://localhost:8080/login/oauth2/code/}
           user-flows:
             sign-up-or-sign-in: B2C_1_signupsignin
             profile-editing-flow: B2C_1_profileediting
