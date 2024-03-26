@@ -56,3 +56,11 @@ spring:
             sign-up-or-sign-in: B2C_1_signupsignin
             profile-editing-flow: B2C_1_profileediting
             password-reset-flow: B2C_1_passwordreset
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+    com:
+      microsoft:
+        azure: DEBUG
