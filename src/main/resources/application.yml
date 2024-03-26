@@ -41,17 +41,21 @@ spring:
     cache-names: currentUsers
   cloud:
     azure:
+      keyvault:
+        secret:
+          property-sources:
+            - endpoint: https://petstorekeyvault.vault.azure.net/
       active-directory:
         b2c:
           enabled: true
           base-uri: https://petstoreorgcloud.b2clogin.com/petstoreorgcloud.onmicrosoft.com/
           credential:
             client-id: b78a416b-28aa-45e6-a3a2-8e46e231c784
-            client-secret: ${PETSTORE_APP_AD_CLIENT_SECRET}
+            client-secret: ${PETSTORE-APP-AD-CLIENT-SECRET}
           login-flow: sign-up-or-sign-in
           profile-edit-flow: profile-editing-flow
           password-reset-flow: password-reset-flow
-          logout-success-url: ${REDIRECT_URI} # http://localhost:8080/login/oauth2/code/
+          logout-success-url: ${REDIRECT-URI} # http://localhost:8080/login/oauth2/code/
           user-flows:
             sign-up-or-sign-in: B2C_1_signupsignin
             profile-editing-flow: B2C_1_profileediting
